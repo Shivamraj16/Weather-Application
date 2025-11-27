@@ -1,0 +1,43 @@
+💾 Implementing JDBC for Database Connectivity
+To implement JDBC (Java Database Connectivity) in your Weather Application, you follow a standardized, multi-step process. This setup allows your application to connect to a database to persist data like user settings or favorite locations.
+
+The process is generally encapsulated in a dedicated DAO (Data Access Object) class.
+
+Key Implementation Steps (The JDBC Flow)
+Load the Driver: The specific database JDBC Driver (a JAR file you must include in your project) needs to be loaded into memory. This is often done implicitly in modern Java environments, but explicitly using Class.forName() ensures the driver is registered with the DriverManager.
+
+// Example for a MySQL driver (often automatic in newer versions)
+// Class.forName("com.mysql.cj.jdbc.Driver");
+
+
+Establish the Connection: The DriverManager uses the unique JDBC URL (which specifies the database type, host, and name), username, and password to establish a physical link, returning a Connection object.
+
+
+
+String url = "jdbc:mysql://localhost:3306/weather_app_db";
+Connection conn = DriverManager.getConnection(url, "user", "password");
+
+
+Execute Statements: You use a PreparedStatement (highly recommended for security) to send SQL commands to the database. The ? placeholders are bound to variables before execution.
+String sql = "INSERT INTO favorites (city_name, user_id) VALUES (?, ?)";
+PreparedStatement stmt = conn.prepareStatement(sql);
+stmt.setString(1, "London");
+stmt.setInt(2, 101);
+stmt.executeUpdate(); // Executes the INSERT command
+
+
+
+try (Connection conn = DriverManager.getConnection(url, "user", "password");
+     PreparedStatement stmt = conn.prepareStatement("SELECT * FROM favorites")) {
+
+    try (ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+            String city = rs.getString("city_name");
+            // ... process city ...
+        }
+    }
+} // conn, stmt, and rs are automatically closed here
+
+
+
+Process Results and Close Resources: For SELECT queries, the database returns a ResultSet. You must iterate through it to map data back to your Java objects (e.g., Location). Critically, all resources are closed using the try-with-resources block to ensure proper cleanup, even if errors occur.
