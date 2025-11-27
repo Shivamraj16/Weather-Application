@@ -1,0 +1,78 @@
+🗄️ Classes for Database Operations (DAO Pattern)
+To achieve a score suitable for 7 marks, database operations must be structured using the Data Access Object (DAO) pattern. This pattern clearly separates the application's business logic from the persistence logic (JDBC), ensuring the application is clean, maintainable, and testable.
+
+1. The DAO Pattern Architecture 🏛️
+The DAO pattern involves three primary components:
+
+Model/Entity Class: The POJO (Plain Old Java Object) representing a table row in Java (e.g., Location or User).
+
+DAO Interface: Defines the contract (methods) for all database operations (CRUD).
+
+DAO Implementation Class: Contains the actual JDBC code (connections, SQL statements, try-catch blocks).
+
+2. Entity Class: Location
+This class models the data you intend to save, such as a favorite city. It contains only fields, getters, setters, and constructors.
+
+Class: Location
+
+Purpose: To serve as a data container between the DAO layer and the Business Logic layer.
+
+Key Fields:
+
+private int id; (Primary Key)
+
+private String cityName;
+
+private String countryCode;
+
+private int userId; (Foreign Key if supporting multiple users)
+
+3. DAO Interface: FavoriteLocationDAO (The Contract)
+This interface defines the API for persistence. The rest of the application only interacts with these methods, entirely ignorant of the underlying database technology (JDBC, Hibernate, etc.).
+
+Interface: FavoriteLocationDAO
+
+Key Methods (CRUD Operations):
+
+public void addLocation(Location loc) throws SQLException;
+
+public List<Location> getLocationsByUserId(int userId) throws SQLException;
+
+public void deleteLocation(int locationId) throws SQLException;
+
+public void updateLocation(Location loc) throws SQLException;
+
+4. DAO Implementation: FavoriteLocationDAOImpl (The Implementation)
+This concrete class holds all the JDBC logic and directly manages database resources. It implements the interface defined in Section 3.
+
+Class: FavoriteLocationDAOImpl
+
+Key Responsibilities:
+
+Resource Management: Establishing and closing Connection, PreparedStatement, and ResultSet.
+
+SQL Execution: Writing and executing INSERT, SELECT, and DELETE SQL statements.
+
+Error Handling: Catching SQLException and logging or wrapping it into a custom PersistenceException.
+
+Example Method (getLocationsByUserId):
+This method demonstrates the full JDBC lifecycle:
+
+Establish Connection: Uses the DriverManager to get a connection.
+
+Prepare Statement: Uses a PreparedStatement for safe, parameterized queries (to prevent SQL Injection).
+
+Execute Query: Executes the SELECT query.
+
+Process Results: Iterates through the ResultSet, mapping data back into Location objects.
+
+Close Resources: Uses the try-with-resources block to guarantee the Connection, PreparedStatement, and ResultSet are closed automatically, even if an exception occurs.
+
+
+
+Benefits of the DAO Pattern
+Decoupling: The Business Logic is shielded from JDBC specifics.
+
+Maintainability: If the database schema or type changes (e.g., from MySQL to SQLite), only the FavoriteLocationDAOImpl class needs modification.
+
+Testability: The Business Logic can be tested by creating a Mock DAO that implements the FavoriteLocationDAO interface but retrieves data from a simple list instead of a real database.
