@@ -1,0 +1,19 @@
+💾 Database Connectivity (JDBC)
+Database Connectivity using JDBC (Java Database Connectivity) is the standard Java API that allows your application to interact with relational databases (like MySQL or PostgreSQL). It is essential for persisting data,
+such as saving a user's favorite locations or application settings.
+
+Key Concepts
+Driver Loading: Before any connection can be made, the specific database JDBC Driver (a Java library provided by the database vendor) must be loaded into the JVM. This driver translates the generic JDBC calls into the database's proprietary language.
+
+Establishing Connection: A Connection object is created using the DriverManager, which requires the database URL, username, and password. This object represents the physical session with the database.
+
+Executing SQL: Database operations are performed using Statement or, preferably, PreparedStatement objects.
+
+PreparedStatement is used for dynamic queries (like inserting or searching based on a city name) as it accepts parameters, which is vital for preventing SQL Injection.
+
+Processing Results: For SELECT queries, the database returns a ResultSet object. Your application iterates through the ResultSet to read the data columns and map them back into Java objects (e.g., your Location or Weather entities).
+
+Resource Management: It is critical to close all JDBC resources (Connection, Statement, ResultSet) to free up memory and database resources, typically done using the try-with-resources statement for guaranteed cleanup.
+
+This entire process is typically encapsulated within a Data Access Object (DAO) class to separate the persistence logic from the core business logic.
+
