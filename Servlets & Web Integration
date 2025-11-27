@@ -1,0 +1,65 @@
+🌐 Servlets & Web Integration
+For a Java application, Servlets are the foundational technology for extending the capabilities of a server (like Apache Tomcat or Jetty) to host web applications. Integrating Servlets would transform your Core Java Weather Application into a Web-Based Application, accessible via a browser.
+
+1. Servlets Overview and Role in the Application
+A Servlet is a Java class that is used to handle client requests (like a user clicking a button in a browser) and generate dynamic content (the HTML page displaying the forecast).
+
+Handling the Request: When a user types a city name and clicks "Search" in a web browser, the browser sends an HTTP request to the server.
+
+Servlet as Controller: A specific Servlet (e.g., WeatherServlet) receives this request. It acts as the Controller that manages the flow, replacing the GUI layer's role in the desktop application.
+
+Processing: The Servlet calls your existing Business Logic Layer (e.g., the WeatherAPIClient and DataParser classes) to fetch and process the weather data.
+
+Generating Response: The Servlet then packages the processed Java data (the Weather objects) into an HTTP response (typically HTML) and sends it back to the browser for display.
+
+2. Key Servlet Mechanisms
+Servlets utilize specific methods and interfaces to execute the request-response cycle:
+
+HttpServlet Class: Your custom Servlet class (e.g., WeatherControllerServlet) would typically extend the HttpServlet abstract class.
+
+doGet() and doPost(): These methods are overridden to handle different types of HTTP requests:
+
+doGet(HttpServletRequest req, HttpServletResponse resp): Used when a user types a URL directly or clicks a simple link. In your application, this could handle displaying the initial page or refreshing the current weather.
+
+doPost(HttpServletRequest req, HttpServletResponse resp): Used when submitting data via an HTML form. This is what would capture the user's City Name search input.
+
+Request & Response Objects:
+
+HttpServletRequest: Used to retrieve client information, most importantly input parameters (e.g., String city = req.getParameter("cityInput");).
+
+HttpServletResponse: Used to set response headers and obtain an output stream (or a PrintWriter) to write the HTML response back to the client.
+
+3. Web Integration Process (The Flow)
+Integrating your application logic into a web environment requires several layers:
+
+Client (Browser): User submits a form with a city name.
+
+Web Container (Server): The server (e.g., Tomcat) receives the request and maps the request URL (defined in web.xml or via annotations) to your WeatherServlet.
+
+Servlet Execution:
+
+The doPost() method executes.
+
+It extracts the city parameter (req.getParameter()).
+
+It invokes the Business Logic (e.g., Weather weatherData = weatherService.getForecast(city);).
+
+Forwarding/Dispatching: Instead of writing complex HTML directly in the Servlet, the Servlet often forwards the data to a presentation technology like JSP (JavaServer Pages).
+
+Servlet: Gathers and processes the data.
+
+JSP: Uses the data passed by the Servlet to generate the final HTML structure, separating data logic from presentation.
+
+Response: The rendered HTML page is sent back to the browser.
+
+This architecture follows the Model-View-Controller (MVC) pattern, where the Servlet acts as the Controller, the Business Logic is the Model, and the JSP is the View.
+
+4. Benefit: Decoupling and Scalability
+Moving to a Servlet-based web application offers significant advantages over a desktop GUI:
+
+Zero Client Installation: Users only need a web browser; there's no need to install Java or the application files locally.
+
+Centralized Updates: All updates and maintenance happen centrally on the server.
+
+Decoupling (MVC): Servlets enforce a clean separation between Data Logic and Presentation, making the application much easier to maintain, debug, and scale. If you want to change the visual layout
+(CSS/HTML), you only modify the JSP/View layer, leaving the Servlet and API communication logic untouched.
