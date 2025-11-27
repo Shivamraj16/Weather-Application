@@ -1,0 +1,63 @@
+To provide a comprehensive, detailed explanation of OOP Implementation (Polymorphism, Inheritance, Exception Handling, Interfaces) suitable for a 10-mark assessment, I will elaborate on the specific Java mechanisms and architectural benefits within the context of your Weather Application.
+
+🏗️ OOP Implementation: Detailed Breakdown
+1. Polymorphism (Many Forms) 🎭
+Polymorphism, literally meaning "many forms," allows objects of different classes to be treated as objects of a common type. It is central to flexible application design.
+
+Mechanism: Method Overriding: Achieved when a subclass provides a specific implementation for a method that is already defined in its superclass.
+
+Application: In a UI built with JavaFX or Swing, a generic Panel class might have a method refreshDisplay(). The CurrentWeatherPanel overrides this to update only the current data fields, while the ForecastGridPanel overrides it to iterate and update five separate forecast cards. The Controller calls panel.refreshDisplay() polymorphically, executing the appropriate logic without knowing the panel's concrete type.
+
+Mechanism: Interface Implementation (Dynamic Polymorphism): Achieved when multiple classes implement the same interface.
+
+Application: A list can hold different types of objects as long as they share a common interface. For instance, you could define a List<IDisplayView> that holds both the CurrentWeatherPanel and the ForecastGridPanel. When looping through the list, the correct renderData() method is executed for each object. This makes adding new display components (e.g., a Radar Map Panel) simple, as they only need to implement the common interface.
+
+2. Inheritance (Is-A Relationship) 🧬
+Inheritance provides a hierarchical structure, promoting code reuse by having specialized classes (subclasses) inherit members from more generalized classes (superclasses).
+
+Mechanism: Extending Classes: Uses the extends keyword.
+
+Application (Data Model): Define a base class WeatherObservation with fields common to all data points (e.g., dateTime, temperature, humidity).
+
+The subclass DailyForecast extends WeatherObservation and adds specialized fields like minTemp, maxTemp, and chanceOfPrecipitation.
+
+The subclass CurrentConditions extends WeatherObservation and adds fields like windGusts and UVIndex.
+
+Benefit: Any method written for the WeatherObservation parent (e.g., convertToFahrenheit()) is automatically available in both child classes, avoiding redundant code.
+
+Mechanism: The super Keyword: Used to call the constructor of the parent class, ensuring that the base state of the object is initialized correctly before the subclass initializes its unique state.
+
+3. Interfaces (Contract and Decoupling) 🤝
+Interfaces enforce a contract, defining a set of methods that implementing classes must adhere to. This is the cornerstone of abstraction and decoupling the layers of the application.
+
+
+
+
+public interface WeatherService {
+    WeatherData getForecast(String city) throws ServiceException;
+    List<Location> searchLocation(String query) throws ServiceException;
+}
+
+
+The concrete class OpenWeatherMapAPIClient implements WeatherService.
+
+The Business Logic layer interacts only with the WeatherService interface. This means the Business Logic doesn't care which API client is being used. If you switch to a different provider
+(e.g., creating a WeatherBitAPIClient), you just change the object instantiation in your main class, and the core application logic remains completely unchanged. This level of decoupling is critical for large, maintainable systems.
+
+
+4. Exception Handling (Robustness) ⚠️
+Exception handling is the mechanism that ensures the application can manage errors and continue functioning gracefully, especially when dealing with external dependencies.
+
+Mechanism: Chaining and Custom Exceptions: Instead of letting low-level Java exceptions (like IOException) bubble up, you catch them and re-throw a custom exception specific to your application domain.
+
+Application: You define a custom checked exception: ServiceException.
+
+In the OpenWeatherMapAPIClient (which handles networking), you catch the IOException and throw new ServiceException("API request failed due to network issues.", e);.
+
+The Controller layer only has to handle the ServiceException, which simplifies the error management code. It can then show a clean, user-friendly message ("Weather service temporarily unavailable") rather than a complex stack trace.
+
+Mechanism: The finally Block: Ensures that critical cleanup code always executes, regardless of whether an exception was thrown.
+
+Application: Essential when dealing with database connections (JDBC) or file/network streams. The finally block or, more commonly in modern Java, the try-with-resources statement, ensures that the HttpURLConnection and its input streams are properly closed after data retrieval, preventing resource leaks.
+
+Application (Service Layer): Define the WeatherService interface.
