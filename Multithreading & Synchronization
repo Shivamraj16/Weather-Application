@@ -1,0 +1,35 @@
+🧵 Multithreading & Synchronization
+Multithreading and Synchronization are crucial for building responsive and stable Java applications, especially those that interact with slow external resources like APIs.
+
+1. Multithreading (Concurrency)
+Multithreading allows the application to execute time-consuming operations concurrently in the background, preventing the main user interface from freezing.
+
+The Problem: Your Weather Application relies on the external Weather API, which involves slow network I/O. If this API call runs on the main Event Dispatch Thread (EDT)—the thread responsible for all GUI updates
+and responsiveness—the UI will become unresponsive, appearing "frozen," until the data is returned.
+
+The Solution: The API communication logic is offloaded to a Worker Thread (often implemented using the Thread class, Runnable interface, or higher-level executors).
+
+The EDT initiates the request and immediately returns to handle user input and redraw the screen.
+
+The Worker Thread performs the actual long task: establishing the connection, sending the request, waiting for the server, reading the data stream, and parsing the JSON.
+
+Once the data is ready, the Worker Thread notifies the EDT to safely update the GUI with the results.
+
+Implementation: Using a framework like SwingWorker simplifies this process, as it provides methods to run code in the background (doInBackground()) and safely update the GUI on the EDT (done()).
+
+2. Synchronization (Thread Safety)
+Synchronization is the mechanism used to protect shared data structures from being corrupted when accessed or modified by multiple threads simultaneously (race conditions).
+
+The Need for Protection: In your application, while the weather data itself might be read-only once loaded, you might introduce a feature involving a shared resource, such as a local data cache (a List or Map of recently fetched weather reports).
+If the Worker Thread is adding new data to the cache while the EDT is checking the cache's size, data corruption or inconsistent state can occur.
+
+The Solution: The synchronized keyword is applied to a method or a block of code that accesses the shared resource.
+
+public synchronized void updateSharedCache(WeatherReport data) {
+    // Only one thread can enter this method at a time.
+    this.cacheList.add(data);
+}
+
+
+How it Works: The synchronized keyword uses an intrinsic lock (monitor) associated with the object. When one thread enters a synchronized method, it acquires the lock; any other thread attempting to enter the same synchronized method
+on the same object must wait until the first thread releases the lock. This ensures mutual exclusion and guarantees data integrity.
